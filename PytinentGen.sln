@@ -1,0 +1,23 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.26730.12
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "PytinentGen", "PytinentGen.pyproj", "{C3BBF3B3-3188-4BAA-83BD-9FE36199FFF3}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C3BBF3B3-3188-4BAA-83BD-9FE36199FFF3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C3BBF3B3-3188-4BAA-83BD-9FE36199FFF3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {C0C0DF5A-2AB3-4A45-813A-3C09CA8F7C32}
+	EndGlobalSection
+EndGlobal

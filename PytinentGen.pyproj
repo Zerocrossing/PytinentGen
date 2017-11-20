@@ -24,9 +24,6 @@
     <Compile Include="geometry.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="other_perlin.py">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="pytinentgen.py" />
     <Compile Include="perlin.py">
       <SubType>Code</SubType>

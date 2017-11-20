@@ -1,50 +1,57 @@
 import numpy as np
-import matplotlib.pyplot as plt
+#Evil Globals
 permutation = None
+gradients = None
 
 #----- PUBLIC PERLIN MAP FUNCTIONS -----
-def perlin_map(x_size,y_size,scale,as_list=False):
-    """Returns a perlin map of size x * y with the frequency as a scale"""
+def perlin_map(x_size,y_size,scale,as_list=False,normalize = False):
+    """Returns a perlin map of size x * y. Scale will adjust fineness of noise"""
     linx = np.linspace(0,scale,x_size)
-    liny =np.linspace(0,scale,y_size)
+    liny = np.linspace(0,scale,y_size)
     x,y = np.meshgrid(linx,liny)
     map = __perlin(x,y)
+    if normalize:
+        map -= map.min()
+        map /= map.max()
     if as_list:
         return map.tolist()
     return map
 
-#TODO Can this be optimized?
-def octave_map(x_size,y_size,num_octaves,base_scale,as_list=False):
+def octave_map(x_size,y_size,num_octaves,base_scale,as_list=False,normalize = False):
     """Returns a map of the sum of num_octaves perlin maps, each scaled down in amplitude by 1/n"""
     output = np.zeros((x_size,y_size))
     for n in range(1,num_octaves+1):
         output += perlin_map(x_size,y_size,base_scale*n)*(1/n)
+    if normalize:
+        output -= output.min()
+        output /= output.max()
     return output
 
-#----- PERMUTATION FUNCTIONS -----
-#This shouldn't really ever change, but the modularity is there
-def __get_permutation(size=256):
-    """Returns the permutation map or creates one if it doesn't exist or is the wrong size"""
-    if permutation is None or len(permutation) != size:
-        __shuffle_permutation(size)
-    return permutation
-
-def __shuffle_permutation(size):
+#----- PERMUTATION AND GRADIENT FUNCTIONS -----
+#Size shouldn't need to change under normal use
+def __make_permutation(size=256):
     """Generates a random permutation of the numbers 0-256 and doubles the array for overflow cases"""
     global permutation
     permutation = np.arange(size,dtype=int)
     np.random.shuffle(permutation)
     permutation = np.append(permutation,permutation)
 
+def __make_gradients(size=256):
+    global gradients
+    x = np.array(2*np.random.rand(size,2)-1)
+    gradients = x/np.linalg.norm(x)
+    return gradients
+
 #----- PRIVATE HELPER FUNCTIONS -----
 def __perlin(x,y):
-    """An implementation of Ken Perlin's 2002 update to his noise algorithm"""
-    p = __get_permutation()
+    """An implementation of Perlin Noise, uses some updates from the 2002 paper but precomputes random gradients"""
+    __make_permutation()
+    __make_gradients()
+    p = permutation
     X = x.astype(int)
     Y = y.astype(int)
     x = x - X
     y = y - Y
-    #print("x and y = ",x,y)
     u = __fade(x)
     v = __fade(y)
     #Hash coordinates
@@ -63,7 +70,7 @@ def __perlin(x,y):
     return (__lerp(v,x1,x2))
 
 def __fade(t):
-    """Perlin's interpolation function"""
+    """Perlin's smoothing function"""
     return (6 * t**5) - (15 * t**4) + (10 * t**3)
 
 def __lerp(t,a,b):
@@ -72,6 +79,5 @@ def __lerp(t,a,b):
 
 def __grad(hash,x,y):
     "selects a pseudorandom gradient vector based on the hash, and returns the dot of the vector and (x,y)"
-    vectors = np.array([[0,1],[0,-1],[1,0],[-1,0]])
-    g = vectors[hash%4]
+    g = gradients[hash]
     return g[:,:,0] * x + g[:,:,1] * y
